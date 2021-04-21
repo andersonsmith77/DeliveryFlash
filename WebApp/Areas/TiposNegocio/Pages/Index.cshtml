@@ -1,0 +1,201 @@
+﻿@page
+@using Microsoft.AspNetCore.Antiforgery
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebApp.Areas.TiposNegocio.Pages.IndexModel
+@inject IAntiforgery antiforgery
+@{
+    ViewData["Title"] = "Tipos de Negocio";
+    Layout = "_Layout";
+    var tokenSet = antiforgery.GetAndStoreTokens(HttpContext);
+}
+
+@section Styles {
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="~/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>@ViewData["Title"]</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-area="" asp-page="Index">Inicio</a></li>
+                    <li class="breadcrumb-item">Catalogos</li>
+                    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Listado de @ViewData["Title"]</div>
+            <div class="card-tools">
+                <a asp-area="TiposNegocio" asp-page="Create" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Nuevo Registro</a>
+            </div>
+        </div>
+        <div class="card-body table-responsive-md p-3">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <select class="form-control" id="sizePage" style="width:75px;">
+                            @foreach (var item in Model.UIPagination.SizesPages)
+                            {
+                                if (Model.UIPagination.GetPageSize == item)
+                                {
+                                    <option selected value="@item">@item</option>
+                                }
+                                else
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-3 offset-md-7">
+                    <div class="form-group float-lg-right">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Buscar" id="searchString" value="@Model.UIPagination.SearchString">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th style="width:8%" class="text-center">Estado</th>
+                        <th style="width:20%" class="text-center">Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.TiposNegocio.Count > 0)
+                    {
+                        @foreach (var item in Model.TiposNegocio)
+                        {
+                            <tr>
+                                <td>@item.Nombre</td>
+                                <td style="width:8%" class="project-state text-center text-lg">
+                                    @if (item.Activo)
+                                    {
+                                        @Html.Raw("<span class='badge bg-success'>Activo</span>")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("<span class='badge bg-default'>Inactivo</span>")
+                                    }
+                                </td>
+                                <td style="width:20%" class="project-actions text-center">
+                                    <a class="btn btn-info btn-sm" title="Editar" asp-area="TiposNegocio" asp-page="Edit" asp-route-id="@item.Id">
+                                        <i class="fas fa-pencil-alt">
+                                        </i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm" title="Eliminar" onclick="jQueryModalDelete('?handler=Delete&id=@item.Id')">
+                                        <i class="fas fa-trash">
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">No se encontraron Registros</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer clearfix">
+            <partial name="_PaginationUI" model="Model.UIPagination" />
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <!-- Pager -->
+    <script src="~/js/pager.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="~/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script type="text/javascript" language=javascript>
+        $(document).ready(function () {
+            $('#a-tiponegocio').addClass('active');
+
+          jQueryModalDelete = (url) => {
+                Swal.fire({
+                    title: '¿Esta seguro que quiere eliminar el registro?',
+                    text: "¡Este proceso es irreversible!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '¡Si, borrarlo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                         try {
+                            $.ajax({
+                                type: 'POST',
+                                url: url,
+                                contentType: false,
+                                processData: false,
+                                headers: {
+                                    '@tokenSet.HeaderName' : '@tokenSet.RequestToken'
+                                },
+                                success: function (res) {
+                                    if (res.deleted) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Registro eliminado exitosamente!',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        })
+                                        setTimeout(function () { location.reload(); }, 2000);
+                                    }
+                                },
+                                error: function (err) {
+                                    console.log(err);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Algo salio mal!',
+                                        footer: '<a href>¿Tienes alguna duda de este error?</a>'
+                                    })
+                                }
+                            })
+                        } catch (ex) {
+                            console.log(ex)
+                        }
+                    }
+                })
+                return false;
+            }
+
+            $('#sizePage').change(function () {
+                filterPaginate("sizePage", $(this).val());
+            });
+            $('.page-link').click(function () {
+                filterPaginate("currentPage", $(this).data("page"));
+            });
+            $('#searchString').on('keyup', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    filterPaginate("searchString", $(this).val());
+                }
+            });
+        });
+    </script>
+    @await Component.InvokeAsync("Notyf")
+}
