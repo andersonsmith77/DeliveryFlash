@@ -14,4 +14,10 @@
         Inactivado = 2,
         Archivado = 3
     }
+    public enum Distancia
+    {
+        Cercana = 1,
+        Mediana = 2,
+        Lejana = 3
+    }
 }

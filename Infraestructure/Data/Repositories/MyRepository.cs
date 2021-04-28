@@ -14,7 +14,6 @@ namespace Infraestructure.Data.Repositories
         {
             this.dbContext = dbContext;
         }
-
         // Not required to implement anything. Add additional functionalities if required.
     }
 }

@@ -4,7 +4,7 @@
 @model WebApp.Areas.Categorias.Pages.IndexModel
 
 @inject IAntiforgery antiforgery
-@{ ViewData["Title"] = "Categorias ";
+@{ ViewData["Title"] = "Categorias";
     Layout = "_Layout";
     var tokenSet = antiforgery.GetAndStoreTokens(HttpContext); }
 

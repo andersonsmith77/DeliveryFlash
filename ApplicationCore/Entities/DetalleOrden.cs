@@ -1,4 +1,7 @@
-﻿namespace ApplicationCore.Entities
+﻿
+using ApplicationCore.Enum;
+
+namespace ApplicationCore.Entities
 {
     public class DetalleOrden
     {
@@ -9,6 +12,7 @@
         public int OrdenId { get; set; }
         public Orden Orden { get; set; }
         public int Cantidad { get; set; }
+        public Distancia Distancia { get; set; }
         public int ProductoId { get; set; }
         public Producto Producto { get; set; }
         public double Total { get; set; }

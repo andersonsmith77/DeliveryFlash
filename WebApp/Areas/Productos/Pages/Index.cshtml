@@ -84,14 +84,14 @@
                         {
                             <tr>
                                 <td>@item.Nombre</td>
-                                <td style="width:8%" class="project-state text-center text-lg">
+                                @*<td style="width:8%" class="project-state text-center text-lg">
                                     @if (item.EsServicio)
                                     {
                                         @Html.Raw("<span class='badge bg-success'>Activo</span>") }
                                     else
                                     {
                                         @Html.Raw("<span class='badge bg-default'>Inactivo</span>")}
-                                </td>
+                                </td>*@
                                 <td style="width:20%" class="project-actions text-center">
                                     <a class="btn btn-info btn-sm" title="Editar" asp-area="Productos" asp-page="Edit" asp-route-id="@item.Id">
                                         <i class="fas fa-pencil-alt">

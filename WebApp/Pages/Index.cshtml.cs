@@ -1,25 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Specification;
+using ApplicationCore.Specification.Filters;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using Infraestructure.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using WebApp.Models;
 
 namespace WebApp.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly MyRepository<Categoria> _repository;
+        public INotyfService _notifyService { get; }
+        private readonly IAppLogger<IndexModel> _logger;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(MyRepository<Categoria> repository, INotyfService notifyService, IAppLogger<IndexModel> logger)
         {
+            _repository = repository;
+            _notifyService = notifyService;
             _logger = logger;
         }
 
-        public void OnGet()
-        {
+        public List<Categoria> Categorias { get; set; }
 
+        public async Task OnGet()
+        {
+            Categorias = await _repository.ListAsync();
         }
     }
 }
