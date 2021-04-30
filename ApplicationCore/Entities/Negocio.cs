@@ -1,4 +1,6 @@
-﻿namespace ApplicationCore.Entities
+﻿using System.Collections.Generic;
+
+namespace ApplicationCore.Entities
 {
     public class Negocio
     {
@@ -8,7 +10,9 @@
         public string Telefono { get; set; }
         public string Email { get; set; }
         public string Direccion { get; set; }
+        public bool Activo { get; set; }
         public int CategoriaId { get; set; }
         public Categoria Categoria { get; set; }
+        public List<Producto> Productos { get; set; }
     }
 }

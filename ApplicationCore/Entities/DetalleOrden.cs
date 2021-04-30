@@ -13,6 +13,7 @@ namespace ApplicationCore.Entities
         public Orden Orden { get; set; }
         public int Cantidad { get; set; }
         public Distancia Distancia { get; set; }
+        //public Tamaño Tamaño { get; set; }
         public int ProductoId { get; set; }
         public Producto Producto { get; set; }
         public double Total { get; set; }

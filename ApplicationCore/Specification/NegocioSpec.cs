@@ -5,9 +5,9 @@ using Ardalis.Specification;
 
 namespace ApplicationCore.Specification
 {
-    public class CategoriaSpec : Specification<Categoria>
+    public class NegocioSpec : Specification<Negocio>
     {
-        public CategoriaSpec(CategoriaFilter filter)
+        public NegocioSpec(NegocioFilter filter)
         {
             Query.OrderBy(x => x.Nombre).ThenByDescending(x => x.Id);
 
@@ -16,7 +16,7 @@ namespace ApplicationCore.Specification
                      .Take(PaginationHelper.CalculateTake(filter));
 
             if (filter.LoadChildren)
-                Query.Include(x => x.Negocios);
+                Query.Include(x => x.Productos);
 
             if (!string.IsNullOrEmpty(filter.Nombre))
                 Query.Search(x => x.Nombre.ToLower(), "%" + filter.Nombre.ToLower() + "%");

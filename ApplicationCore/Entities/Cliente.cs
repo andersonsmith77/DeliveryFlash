@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Enum;
 using System;
+using System.Collections.Generic;
 
 namespace ApplicationCore.Entities
 {
@@ -13,5 +14,6 @@ namespace ApplicationCore.Entities
         public string Email { get; set; }
         public string Telefono { get; set; }
         public Estado Estado { get; set; }
-    }
+        public List<Orden> Ordenes { get; set; }
+    }   
 }
