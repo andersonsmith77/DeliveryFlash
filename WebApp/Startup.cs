@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Areas.Categorias.Validation;
 using WebApp.Areas.Clientes.Validation;
+using WebApp.Areas.Negocios.Validation;
 using WebApp.Areas.Productos.Validation;
 
 namespace WebApp
@@ -36,8 +37,9 @@ namespace WebApp
         {
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("ConectionApp")));
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CategoriaValidator>());
+            //services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<NegocioValidator>());
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ClienteValidator>());
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductoValidator>());
+            //services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductoValidator>());
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
             services.AddScoped(typeof(MyRepository<>));
             services.AddScoped(typeof(IRepository<>), typeof(MyRepository<>));

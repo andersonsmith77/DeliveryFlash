@@ -1,11 +1,12 @@
 ﻿@page
 @using Microsoft.AspNetCore.Antiforgery
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model WebApp.Areas.Productos.Pages.IndexModel
 @inject IAntiforgery antiforgery
-@{ ViewData["Title"] = "Productos ";
-    Layout = "_Layout";
-    var tokenSet = antiforgery.GetAndStoreTokens(HttpContext); }
+@using ApplicationCore.Enum
+@model WebApp.Areas.Productos.Pages.IndexModel
+@{ ViewData["Title"] = $"Productos - {Model.Negocio.Nombre}";
+                Layout = "_Layout";
+                var tokenSet = antiforgery.GetAndStoreTokens(HttpContext); }
 
 @section Styles {
     <!-- SweetAlert2 -->
@@ -22,6 +23,7 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a asp-area="" asp-page="Index">Inicio</a></li>
                     <li class="breadcrumb-item">Catalogos</li>
+                    <li class="breadcrumb-item"><a asp-area="Negocios" asp-page="Index">Negocios</a></li>
                     <li class="breadcrumb-item active">@ViewData["Title"]</li>
                 </ol>
             </div>
@@ -36,80 +38,74 @@
         <div class="card-header">
             <div class="card-title">Listado de @ViewData["Title"]</div>
             <div class="card-tools">
-                <a asp-area="Productos" asp-page="Create" class="btn btn-outline-primary"><i class="fas fa-plus"></i> Nuevo Producto</a>
+                <a asp-area="Productos" asp-page="Create" asp-route-zonaId="@Model.Negocio.Id" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Nuevo Registro</a>
+                &nbsp;
+                <a asp-area="Negocios" asp-page="Index" class="btn btn-info float-right"><i class="fas fa-arrow-alt-circle-left"></i> Volver a Negocios</a>
             </div>
         </div>
         <div class="card-body table-responsive-md p-3">
             <div class="row">
                 <div class="col-sm-2">
                     <div class="form-group">
-                        <select class="form-control" id="sizePage" style="width:75px;">
+                        <select class="form-control form-control-sm" id="sizePage" style="width:65px;">
                             @foreach (var item in Model.UIPagination.SizesPages)
                             {
                                 if (Model.UIPagination.GetPageSize == item)
                                 {
-                                    <option selected value="@item">@item</option>
- }
+                <option selected value="@item">@item</option> }
                                 else
                                 {
-                                    <option value="@item">@item</option>
-}
+                <option value="@item">@item</option>}
                             }
                         </select>
                     </div>
                 </div>
                 <div class="col-sm-3 offset-md-7">
                     <div class="form-group float-lg-right">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Buscar" id="searchString" value="@Model.UIPagination.SearchString">
-                            <div class="input-group-append">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Buscar" id="searchString"
+                                   value="@Model.UIPagination.SearchString">
                         </div>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
+            <table class="table table-bordered table-hover text-nowrap">
+                <thead class="thead-light">
+                    <tr class="text-center">
                         <th>Nombre</th>
-                        <th style="width:8%" class="text-center">Servicio</th>
-                        <th style="width:20%" class="text-center">Opciones</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model.Productos.Count > 0)
                     {
-                        @foreach (var item in Model.Productos)
-                        {
-                            <tr>
-                                <td>@item.Nombre</td>
-                                @*<td style="width:8%" class="project-state text-center text-lg">
-                                    @if (item.EsServicio)
-                                    {
-                                        @Html.Raw("<span class='badge bg-success'>Activo</span>") }
-                                    else
-                                    {
-                                        @Html.Raw("<span class='badge bg-default'>Inactivo</span>")}
-                                </td>*@
-                                <td style="width:20%" class="project-actions text-center">
-                                    <a class="btn btn-info btn-sm" title="Editar" asp-area="Productos" asp-page="Edit" asp-route-id="@item.Id">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                    <a class="btn btn-danger btn-sm" title="Eliminar" onclick="jQueryModalDelete('?handler=Delete&id=@item.Id')">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                    </a>
-                                </td>
-                            </tr>
-} }
+                    @foreach (var item in Model.Productos)
+                    {
+                     <tr class="text-center">
+                        <td>@item.Nombre</td>
+                        <td>@item.Precio</td>
+                        <td class="project-state text-lg">
+                            <partial name="_BadgeEstadoMesa" model="item.Estado" />
+                        </td>
+                        <td class="project-actions">
+                            <div class="btn-group btn-group-sm">
+                                <a class="btn btn-info btn-sm" title="Editar" asp-area="Productos" asp-page="Edit" asp-route-id="@item.Id" asp-route-negocioId="@item.NegocioId">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a class="btn btn-danger btn-sm" title="Eliminar" onclick="jQueryModalDelete('?handler=Delete&id=@item.Id')">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>} }
                     else
                     {
-                        <tr>
-                            <td colspan="5" class="text-center">No se encontraron Registros</td>
-                        </tr>
-}
+                    <tr>
+                        <td colspan="4" class="text-center">No se encontraron Registros</td>
+                    </tr>
+                    }
 
                 </tbody>
             </table>
@@ -120,6 +116,7 @@
         </div>
     </div>
 </section>
+<!-- /.content -->
 @section Scripts {
     <!-- Pager -->
     <script src="~/js/pager.js"></script>
@@ -127,11 +124,11 @@
     <script src="~/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script type="text/javascript" language=javascript>
         $(document).ready(function () {
-            $('#a-producto').addClass('active');
+            $('#a-zona').addClass("active");
 
-          jQueryModalDelete = (url) => {
+            jQueryModalDelete = (url) => {
                 Swal.fire({
-                    title: '¿Esta seguro que quiere eliminar este producto?',
+                    title: '¿Esta seguro que quiere eliminar el registro?',
                     text: "¡Este proceso es irreversible!",
                     icon: 'warning',
                     showCancelButton: true,

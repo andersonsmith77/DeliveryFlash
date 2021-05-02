@@ -16,25 +16,43 @@ namespace WebApp.Areas.Negocios.Pages
     public class IndexModel : PageModel
     {
         private readonly MyRepository<Negocio> _repository;
+        private readonly MyRepository<Categoria> _categoriaRepository;
         public INotyfService _notifyService { get; }
         private readonly IAppLogger<IndexModel> _logger;
 
-        public IndexModel(MyRepository<Negocio> repository, INotyfService notifyService, IAppLogger<IndexModel> logger)
+        public IndexModel(MyRepository<Negocio> repository, INotyfService notifyService, MyRepository<Categoria> categoriaRepository, IAppLogger<IndexModel> logger)
         {
             _repository = repository;
             _notifyService = notifyService;
+            _categoriaRepository = categoriaRepository;
             _logger = logger;
         }
 
         public List<Negocio> Negocios { get; set; }
+        public Categoria Categoria { get; set; }
         public UIPaginationModel UIPagination { get; set; }
-        public async Task OnGet(string searchString, int? currentPage, int? sizePage)
+
+        public async Task<IActionResult> OnGetAsync(int? categoriaId, string searchString, int? currentPage, int? sizePage) 
         {
             try
             {
+                if (!categoriaId.HasValue)
+                {
+                    _notifyService.Warning($"Debe selecionar una categoria para ver sus negocios");
+                    return RedirectToPage("Index", new { area = "Categorias" });
+                }
+
+                Categoria = await _categoriaRepository.GetByIdAsync(categoriaId.Value);
+                if (Categoria == null) 
+                {
+                    _notifyService.Warning($"No se ha encontrado una categoria con el id {categoriaId.Value}");
+                    return RedirectToPage("Index", new { area = "Categorias" });
+                }
+
                 var totalItems = await _repository.CountAsync(new NegocioSpec(
                     new NegocioFilter
                     {
+                        CategoriaId = categoriaId.Value,
                         Nombre = searchString,
                         LoadChildren = false,
                         IsPagingEnabled = true
@@ -46,16 +64,18 @@ namespace WebApp.Areas.Negocios.Pages
                     {
                         IsPagingEnabled = true,
                         Nombre = UIPagination.SearchString,
+                        CategoriaId = categoriaId.Value,
                         PageSize = UIPagination.GetPageSize,
                         Page = UIPagination.GetCurrentPage,
-                        LoadChildren = false
-                    }
-                ));
+                        LoadChildren = true
+                    })
+                );
+                return Page();
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex.Message);
-                throw;
+                return RedirectToPage("Index", new { area = "Categorias"});
             }
         }
 

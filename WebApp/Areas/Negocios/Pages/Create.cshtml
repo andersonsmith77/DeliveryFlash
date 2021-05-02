@@ -1,7 +1,8 @@
 ﻿@page
 @model WebApp.Areas.Negocios.Pages.CreateModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@{ ViewData["Title"] = "Nuevo negocio";
+@{ 
+    ViewData["Title"] = $"Nuevo Negocio - {Model.Categoria.Nombre}";
     Layout = "_Layout"; }
 @section Styles {
     <!-- iCheck for checkboxes and radio inputs -->
@@ -18,7 +19,7 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a asp-area="" asp-page="Index">Inicio</a></li>
                     <li class="breadcrumb-item">Catalogos</li>
-                    <li class="breadcrumb-item">categorias</li>
+                    <li class="breadcrumb-item"><a asp-area="Categorias" asp-page="Index">Categorias</a></li>
                     <li class="breadcrumb-item active">@ViewData["Title"]</li>
                 </ol>
             </div>
@@ -33,23 +34,30 @@
         <div class="card-header">
             <div class="card-title">Llene correctamente el formulario</div>
             <div class="card-tools">
-                <a asp-area="Negocios" asp-page="Index" class="btn btn-outline-info float-right"><i class="fas fa-arrow-left"></i> Volver al Listado</a>
+                <a asp-area="Negocios" asp-page="Edit" asp-route-categoriaId="@Model.Negocio.Id" class="btn btn-outline-info float-right"><i class="fas fa-arrow-left"></i> Volver al Listado</a>
             </div>
         </div>
         <div class="card-body">
             <!-- form start -->
             <form method="post" asp-action="Create" autocomplete="off">
                 <div class="card-body">
+                    <input type="hidden" asp-for="Negocio.CategoriaId"/>
                     <div class="form-group">
                         <label asp-for="Negocio.Nombre"></label>
                         <input class="form-control" asp-for="Negocio.Nombre" placeholder="Nombre del negocio">
                         <span class="text-danger" asp-validation-for="Negocio.Nombre"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="Negocio.Telefono"></label>
                         <input class="form-control" asp-for="Negocio.Telefono" placeholder="Teléfono del negocio">
                         <span class="text-danger" asp-validation-for="Negocio.Telefono"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="Negocio.Email"></label>
                         <input class="form-control" asp-for="Negocio.Email" placeholder="Email del negocio">
                         <span class="text-danger" asp-validation-for="Negocio.Email"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="Negocio.Direccion"></label>
                         <input class="form-control" asp-for="Negocio.Direccion" placeholder="Dirección del negocio">
                         <span class="text-danger" asp-validation-for="Negocio.Direccion"></span>
